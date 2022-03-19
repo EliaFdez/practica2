@@ -24,11 +24,11 @@ class Monitor():
         self.mutex.acquire()
 
         if direction == NORTH:
-            self.no_south.acquire(self.south.value == 0)
-            self.north.value = self.north.value + 1
+            self.no_south.wait_for(lambda: self.south.value==0)
+            self.north.value += 1
         else:
-            self.no_north.acquire(self.north.value == 0)
-            self.south.value = self.south.value + 1
+            self.no_north.wait_for(lambda: self.north.value==0)
+            self.south.value += 1
 
         self.mutex.release()
 
@@ -36,11 +36,11 @@ class Monitor():
         self.mutex.acquire()
 
         if direction == NORTH:
-            self.north.value = self.north.value - 1
-            self.no_north.release()
+            self.north.value -= 1
+            self.no_north.notify_all()
         else:
-            self.south.value = self.south.value - 1
-            self.no_south.release()
+            self.south.value -= 1
+            self.no_south.notify_all()
 
         self.mutex.release()
 
