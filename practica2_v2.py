@@ -35,7 +35,7 @@ class Monitor():
             self.had_passed_south.value = 0
             self.north.value += 1
             self.had_passed_north.value += 1
-            print(f'{self.had_passed_north.value} cars had passed direction NORTH and {self.waiting_south.value} cars are waiting direction SOUTH\n')
+            print(f'{self.had_passed_north.value} cars had passed NORTH direction and {self.waiting_south.value} cars are waiting SOUTH direction\n')
         else:
             self.waiting_south.value += 1
             self.no_north.wait_for(lambda: self.north.value == 0 and (self.had_passed_south.value < K or self.waiting_north.value == 0))
@@ -43,7 +43,7 @@ class Monitor():
             self.had_passed_north.value = 0
             self.south.value += 1
             self.had_passed_south.value += 1
-            print(f'{self.had_passed_south.value} cars had passed direction SOUTH and {self.waiting_north.value} cars are waiting direction NORTH\n')
+            print(f'{self.had_passed_south.value} cars had passed SOUTH direction and {self.waiting_north.value} cars are waiting NORTH direction\n')
 
         self.mutex.release()
 
@@ -79,21 +79,14 @@ def car(cid, direction, monitor):
 def main():
     monitor = Monitor()
     cid = 0
-    for i in range(NCARS):
-        # if 0 <= i <= 10:
-        #     direction = NORTH
-        # elif 11 <= i <= 13:
-        #     direction = SOUTH
-        # elif 13 <= i <= 23:
-        #     direction = NORTH
-        # elif i > 23:
-        #     direction = SOUTH
+    for _ in range(NCARS):
 
         direction = NORTH if random.randint(0, 1) == 1 else SOUTH
         cid += 1
         p = Process(target=car, args=(cid, direction, monitor))
         p.start()
         time.sleep(random.expovariate(1 / 0.5))  # a new car enters each 0.5s
+
 
 if __name__ == "__main__":
     main()
